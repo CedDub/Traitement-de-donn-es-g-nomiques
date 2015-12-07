@@ -45,62 +45,28 @@ int __attribute__ ((noinline)) distance (char *reads, char *genome, int k)
       g2 = g2<<2;
       g2 = g2|((genome[k+i+64]>>1)&3);
     }
-/*	printf("\nreads =");
-        for(i=0; i<96; i++){
-                printf("%c", reads[i]);
-        }
 
-	printf("\ngenome=");
-	for(i=0; i<96; i++){
-		printf("%c", genome[i+k]);
-	}
-        printf("\nr0 =%lx\n",r0);
-        printf("g0 =%lx\n",g0);
-        printf("r1 =%lx\n",r1);
-        printf("g1 =%lx\n",g1);
-        printf("r2 =%lx\n",r2);
-        printf("g2 =%lx\n",g2);
-*/
         unsigned long int s00 =r0^g0;
-  //      printf("s00=%lx\n", s00);
         unsigned long int s10 = 0xAAAAAAAAAAAAAAAA & s00;               // prise en compte des parties gauches
-    //    printf("s10=%lx\n", s10);
         unsigned long int s20 = 0x5555555555555555 & s00;               // prise en compte des parties droites
-      //  printf("s20=%lx\n", s20);
         s20 = s20<<1;
-       // printf("s20 decal=%lx\n", s20);
         s10 = s10|s20;
-       // printf("s10 ou =%lx\n", s10);
+
 
         unsigned long int s01 =r1^g1;
-       // printf("s01=%lx\n", s01);
         unsigned long int s11 = 0xAAAAAAAAAAAAAAAA & s01;
-       // printf("s11=%lx\n", s11);
         unsigned long int s21 = 0x5555555555555555 & s01;
-       // printf("s21=%lx\n", s21);
         s21 = s21<<1;
-       // printf("s21 decal=%lx\n", s21);
         s11 = s11|s21;
-       // printf("s11 ou =%lx\n", s11);
 
         unsigned long int s02 = r2^g2;
-       // printf("s02=%lx\n", s02);
         unsigned long int s12 = 0xAAAAAAAAAAAAAAAA & s02;
-       // printf("s12=%lx\n", s12);
         unsigned long int s22 = 0x5555555555555555 & s02;
-       // printf("s22=%lx\n", s22);
         s22 = s22<<1;
-       // printf("s22 decal=%lx\n", s22);
         s12 = s12|s22;
-       // printf("s12 ou =%lx\n", s12);
 
-        d = _mm_popcnt_u64(s10)+_mm_popcnt_u64(s11)+_mm_popcnt_u64(s12);
-        //printf("score0=%d\n",_mm_popcnt_u32(s10));
-       // printf("score1=%d\n",_mm_popcnt_u32(s11));
-       // printf("score2=%d\n",_mm_popcnt_u32(s12));
-       // printf("scoret=%d\n",d);                  
+        d = _mm_popcnt_u64(s10)+_mm_popcnt_u64(s11)+_mm_popcnt_u64(s12);                
         return d;
-
 }
 
 void __attribute__ ((noinline)) process_read(struct s_bank *query, int nq, char *genome, int *IDX1, int*IDX2, int *IDX)
