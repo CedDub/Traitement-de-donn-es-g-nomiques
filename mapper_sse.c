@@ -29,47 +29,78 @@ int __attribute__ ((noinline)) distance (char *reads, char *genome, int k)
   unsigned long int r0=0, r1=0, r2=0;
   unsigned long int g0=0, g1=0, g2=0;
   int i;
-  for (i=0; i<31; i++)
+  for (i=0; i<32; i++)
     {
       r0 = r0<<2;
-      r0 = r0+((reads[i]>>1)&3);
+      r0 = r0|((reads[i]>>1)&3);
       r1 = r1<<2;
-      r1 = r1+((reads[i+31]>>1)&3);
+      r1 = r1|((reads[i+32]>>1)&3);
       r2 = r2<<2;
-      r2 = r2+((reads[i+63]>>1)&3);
+      r2 = r2|((reads[i+64]>>1)&3);
 
       g0 = g0<<2;
-      g0 = g0+((genome[i]>>1)&3);
+      g0 = g0|((genome[k+i]>>1)&3);
       g1 = g1<<2;
-      g1 = g1+((genome[i+31]>>1)&3);
+      g1 = g1|((genome[k+i+32]>>1)&3);
       g2 = g2<<2;
-      g2 = g2+((genome[i+63]>>1)&3);
+      g2 = g2|((genome[k+i+64]>>1)&3);
     }
+/*	printf("\nreads =");
+        for(i=0; i<96; i++){
+                printf("%c", reads[i]);
+        }
 
-	unsigned long int s00 =r0^g0;			//comptdre en compte les groupes de 2
-	unsigned long int s10 = 0xAAAAAAAAAAAAAAAA & s00;		// prise en compte des parties gauches
-	unsigned long int s20 = 0x5555555555555555 & s00;		// prise en compte des parties droites
-	s10 = s10>>1;
-	//printf("\ns10 avant = %x\n",s10);					//decalage à droite des parties 
-	s10 = s10|s20;
-	//printf("\ns20 = %x",s20);
-	//printf("\ns10 apres = %x",s10);
-	//printf("\ns00 = %x",s00);
+	printf("\ngenome=");
+	for(i=0; i<96; i++){
+		printf("%c", genome[i+k]);
+	}
+        printf("\nr0 =%lx\n",r0);
+        printf("g0 =%lx\n",g0);
+        printf("r1 =%lx\n",r1);
+        printf("g1 =%lx\n",g1);
+        printf("r2 =%lx\n",r2);
+        printf("g2 =%lx\n",g2);
+*/
+        unsigned long int s00 =r0^g0;
+  //      printf("s00=%lx\n", s00);
+        unsigned long int s10 = 0xAAAAAAAAAAAAAAAA & s00;               // prise en compte des parties gauches
+    //    printf("s10=%lx\n", s10);
+        unsigned long int s20 = 0x5555555555555555 & s00;               // prise en compte des parties droites
+      //  printf("s20=%lx\n", s20);
+        s20 = s20<<1;
+       // printf("s20 decal=%lx\n", s20);
+        s10 = s10|s20;
+       // printf("s10 ou =%lx\n", s10);
 
-	unsigned long int s01 =r1^g1;
-	unsigned long int s11 = 0xAAAAAAAAAAAAAAAA & s01;
-	unsigned long int s21 = 0x5555555555555555 & s01;
-	s11 = s11>>1;
-	s11 = s11|s21;
+        unsigned long int s01 =r1^g1;
+       // printf("s01=%lx\n", s01);
+        unsigned long int s11 = 0xAAAAAAAAAAAAAAAA & s01;
+       // printf("s11=%lx\n", s11);
+        unsigned long int s21 = 0x5555555555555555 & s01;
+       // printf("s21=%lx\n", s21);
+        s21 = s21<<1;
+       // printf("s21 decal=%lx\n", s21);
+        s11 = s11|s21;
+       // printf("s11 ou =%lx\n", s11);
 
-	unsigned long int s02 = r2^g2;
-	unsigned long int s12 = 0xAAAAAAAAAAAAAAAA & s02;
-	unsigned long int s22 = 0x5555555555555555 & s02;
-	s12 = s12>>1;
-	s12 = s12|s22;
-	d = _mm_popcnt_u32(s10)+_mm_popcnt_u32(s11)+_mm_popcnt_u32(s12);
-//	printf("d=%d",d);
-	return d;
+        unsigned long int s02 = r2^g2;
+       // printf("s02=%lx\n", s02);
+        unsigned long int s12 = 0xAAAAAAAAAAAAAAAA & s02;
+       // printf("s12=%lx\n", s12);
+        unsigned long int s22 = 0x5555555555555555 & s02;
+       // printf("s22=%lx\n", s22);
+        s22 = s22<<1;
+       // printf("s22 decal=%lx\n", s22);
+        s12 = s12|s22;
+       // printf("s12 ou =%lx\n", s12);
+
+        d = _mm_popcnt_u64(s10)+_mm_popcnt_u64(s11)+_mm_popcnt_u64(s12);
+        //printf("score0=%d\n",_mm_popcnt_u32(s10));
+       // printf("score1=%d\n",_mm_popcnt_u32(s11));
+       // printf("score2=%d\n",_mm_popcnt_u32(s12));
+       // printf("scoret=%d\n",d);                  
+        return d;
+
 }
 
 void __attribute__ ((noinline)) process_read(struct s_bank *query, int nq, char *genome, int *IDX1, int*IDX2, int *IDX)
