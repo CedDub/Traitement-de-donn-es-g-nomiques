@@ -5,11 +5,11 @@ all: mapper mapper_sse mapper_pth
 	date > compile_time
 
 mapper: mapper.c iobank.h
-	$(CC) -o mapper mapper.c $(CFLAGS)  -lm -lz 
+	$(CC) -o mapper mapper.c $(CFLAGS)  -lm
 
 mapper_sse: mapper_sse.c  iobank.h
-	$(CC) -o mapper_sse mapper_sse.c $(CFLAGS)  -lm -lz -msse4
+	$(CC) -o mapper_sse mapper_sse.c $(CFLAGS)  -lm -msse4
 
 mapper_pth: mapper_pth.c iobank.h
-	$(CC) -o mapper_pth mapper_pth.c $(CFLAGS)  -lm -lz -msse4 -lpthread -D_REENTRANT
+	$(CC) -o mapper_pth mapper_pth.c $(CFLAGS)  -lm -msse4 -lpthread -D_REENTRANT
 
